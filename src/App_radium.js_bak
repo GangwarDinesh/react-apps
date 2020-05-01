@@ -1,0 +1,159 @@
+//import React, { useState } from 'react'; // For reactHooks
+import React, { Component } from 'react'; // For Component based
+import logo from './logo.svg';
+import './App.css';
+import Person from './Person/Person';
+import Radium, { StyleRoot } from 'radium';
+
+//Below are the class based component with state object
+class App extends Component{
+  state = {
+    persons : [
+      {name : "Dinesh", age : 29},
+      {name : "Ajit", age : 25},
+      {name : "Aditya", age : 26}
+    ],
+    showPersons : false
+  }
+
+  changePropertyHandler = (newName) =>{
+    console.log("changePropertyHandler clicked");
+    this.setState({
+      persons : [
+        {name : newName, age : 29},
+        {name : "Ajit", age : 25},
+        {name : "Aditya", age : 28}
+      ]
+    })
+  }
+
+  nameChangeHandler = (index, event) => {
+    const person = {...this.state.persons[index]};
+    person.name = event.target.value;
+    const persons = [...this.state.persons];
+    persons[index] = person;
+    this.setState({persons : persons});
+
+  }
+
+  toggleHandler = () =>{
+    const doesShow = this.state.showPersons;
+    this.setState({showPersons: !doesShow});
+  }
+
+  deletePersonHandler = (index) =>{
+    const persons = [...this.state.persons];
+    persons.splice(index, 1);
+    this.setState({persons: persons})
+  }
+
+  render(){
+    const style = {
+      backgroundColor : 'green',
+      font: 'inherit',
+      border: '1px solid gray',
+      padding: '8px',
+      cursor: 'pointer',
+      ':hover': {
+        backgroundColor: 'lightgreen',
+        color: 'black'
+      }
+    }
+    let persons = null;
+    const classess = [];
+    if(this.state.persons.length<=2){
+      classess.push('red');
+    }
+    if(this.state.persons.length<=1){
+      classess.push('bold');
+    }
+    if(this.state.showPersons){
+      persons = (
+        <StyleRoot>
+          <div>
+            {this.state.persons.map((person, index)=>{
+              return <Person key={index}
+                        name={person.name}
+                        age={person.age}
+                        click={this.deletePersonHandler.bind(this, index)}
+                        changed={this.nameChangeHandler.bind(this, index)} />
+            })}
+          </div>
+        </StyleRoot>
+      );
+      style.backgroundColor = 'red';
+      style[':hover'] = {
+        backgroundColor: 'salmon',
+        color: 'black'
+      }
+    }
+    return (
+      <div className="App">
+        <p className={classess.join(" ")}>Hi! Below are the person details.</p>
+        <button 
+          style={style}
+          onClick={this.toggleHandler}>Toggle Button</button>
+        { persons
+        /*this.state.showPersons ?
+          <div>
+            <Person 
+                name={this.state.persons[0].name} 
+                age={this.state.persons[0].age}
+                click={this.changePropertyHandler.bind(this, "Babban Singh")}
+                changed={this.nameChangeHandler} />
+            <Person 
+                name={this.state.persons[1].name} 
+                age={this.state.persons[1].age} >My hobbies : playing</Person>
+            <Person 
+                name={this.state.persons[2].name}
+                age={this.state.persons[2].age} />
+          </div> : null
+        */}
+      </div>
+    );  
+  }  
+}
+
+export default Radium(App);
+
+
+// React hook [Minimum version should be 16.8.6 of react]
+/*const App = props => {
+ const [personsState, setPersonsState] =  useState({
+    persons : [
+      {name : "Dinesh", age : 29},
+      {name : "Ajit", age : 25},
+      {name : "Aditya", age : 26}
+    ]
+  });
+
+const [otherState, setOtherState] = useState('some other value');
+ const changePropertyHandler = () => {
+    console.log("changePropertyHandler clicked");
+    setPersonsState({
+      persons : [
+        {name : "Dinesh Gangwar", age : 29},
+        {name : "Ajit", age : 25},
+        {name : "Aditya", age : 28}
+      ]
+    })
+  };
+
+ 
+  return (
+      <div className="App">
+        <button onClick={changePropertyHandler}>Change name</button>
+        <Person 
+                name={personsState.persons[0].name} 
+                age={personsState.persons[0].age}/>
+        <Person 
+                name={personsState.persons[1].name} 
+                age={personsState.persons[1].age} >My hobbies : playing</Person>
+        <Person 
+                name={personsState.persons[2].name}
+                age={personsState.persons[2].age} />
+      </div>
+    );  
+  }  
+export default App;
+*/
